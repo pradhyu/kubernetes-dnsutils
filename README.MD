@@ -28,8 +28,10 @@ kubectl exec dnsutils -- nslookup kubernetes.default
 kubectl exec dnsutils -- dig kubernetes.default
 
 ## using cluster.local
-kubectl exec dnsutils -- nslookup kubernetes.default.cluster.local
-kubectl exec dnsutils -- dig kubernetes.default.cluster.local
+kubectl exec dnsutils -- nslookup kubernetes.default.svc
+### notworking
+kubectl exec dnsutils -- nslookup kubernetes.default.svc.cluster.local.
+kubectl exec dnsutils -- dig kubernetes.default.svc.cluster.local.
 
 
 ## external service 
@@ -52,6 +54,14 @@ kubectl get pods --namespace=kube-system -l k8s-app=kube-dns
 
 # core dns 
 kubectl -n kube-system edit configmap/coredns
+
+
+# microk8s iptables forward 
+sudo iptables -P FORWARD ACCEPT
+iptables-persistence to save it 
+sudo cat /etc/sysconfig/iptables-config 
+
+-- this works --iptables=false to /var/snap/microk8s/current/args/dockerd?
 
 
 # make kubernetes dashboard accessible 
