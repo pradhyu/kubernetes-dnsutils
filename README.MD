@@ -53,8 +53,36 @@ kubectl get pods --namespace=kube-system -l k8s-app=kube-dns
 
 
 # core dns 
-kubectl -n kube-system edit configmap/coredns
+''''
+#dnsutil pod 
+kubectl -n kube-system delete po -l k8s-app=kube-dns
 
+#get config map for coredns
+kubectl -n kube-system edit configmap/coredns
+kubectl -n kube-system get configmap/coredns -o yaml
+
+#apply patch with new config map values
+kubectl apply -n kube-system -f  yamls/coredns-configmap-patch.yaml
+#list configmaps 
+kubectl get configmap -n kube-system | grep coredns
+
+#describe coredns deployment
+kubectl describe deployment coredns -n kube-system
+
+# delete cored ns to reload , verify that it's loading the test.server
+kubectl get configmap -n kube-system coredns -o yaml
+
+#delete pod to get new dns
+kubectl delete pod --namespace default dnsutils
+#create
+kubectl apply -f https://k8s.io/examples/admin/dns/dnsutils.yaml
+#test dns 
+kubectl exec dnsutils -- nslookup dig abc.com
+
+
+
+
+''''
 
 # microk8s iptables forward 
 sudo iptables -P FORWARD ACCEPT
